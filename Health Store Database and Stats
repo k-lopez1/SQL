@@ -2,28 +2,28 @@
 
 CREATE TABLE health_store (id INTEGER PRIMARY KEY, item TEXT, section TEXT, price INTEGER, popularity INTEGER);
 
-INSERT INTO store VALUES (1, "papaya", "produce", 2.99, 50);
-INSERT INTO store VALUES (2, "bananas", "produce", 0.99, 95);
-INSERT INTO store VALUES (3, "saurkraut", "fresh", 3.99, 55);
-INSERT INTO store VALUES (4, "pinto beans", "bulk", 0.99, 70);
-INSERT INTO store VALUES (5, "beyond burgers", "meat", 4.99, 65);
-INSERT INTO store VALUES (6, "salsa", "fresh", 3.25, 67);
-INSERT INTO store VALUES (7, "hummus", "fresh", 2.99, 74);
-INSERT INTO store VALUES (8, "lentil chips", "snacks", 3.99, 30);
-INSERT INTO store VALUES (9, ""green juice, "fresh", 6.99, 60);
-INSERT INTO store VALUES (10, "peas", "frozen", 0.99, 25);
-INSERT INTO store VALUES (11, "blueberries", "frozen", 2.99, 57);
-INSERT INTO store VALUES (12, "granola", "bulk", 1.99, 80);
-INSERT INTO store VALUES (13, "vitamin D", "supplements", 8.99, 29);
-INSERT INTO store VALUES (14, "nutritional yeast", "bulk", 2.99, 26);
-INSERT INTO store VALUES (15, "dark chocolate", "snacks", 3.99, 47);
+INSERT INTO health_store VALUES (1, "papaya", "produce", 2.99, 50);
+INSERT INTO health_store VALUES (2, "bananas", "produce", 0.99, 95);
+INSERT INTO health_store VALUES (3, "saurkraut", "fresh", 3.99, 55);
+INSERT INTO health_store VALUES (4, "pinto beans", "bulk", 0.99, 70);
+INSERT INTO health_store VALUES (5, "beyond burgers", "meat", 4.99, 65);
+INSERT INTO health_store VALUES (6, "salsa", "fresh", 3.25, 67);
+INSERT INTO health_store VALUES (7, "hummus", "fresh", 2.99, 74);
+INSERT INTO health_store VALUES (8, "lentil chips", "snacks", 3.99, 30);
+INSERT INTO health_store VALUES (9, ""green juice, "fresh", 6.99, 60);
+INSERT INTO health_store VALUES (10, "peas", "frozen", 0.99, 25);
+INSERT INTO health_store VALUES (11, "blueberries", "frozen", 2.99, 57);
+INSERT INTO health_store VALUES (12, "granola", "bulk", 1.99, 80);
+INSERT INTO health_store VALUES (13, "vitamin D", "supplements", 8.99, 29);
+INSERT INTO health_store VALUES (14, "nutritional yeast", "bulk", 2.99, 26);
+INSERT INTO health_store VALUES (15, "dark chocolate", "snacks", 3.99, 47);
 
 --display the database ordered by price. 
 SELECT * FROM health_store
 ORDER BY price desc; 
 
 --what is the avg price of items in the bulk section? 
-SELECT AVG(price) "avg bulk item price"
+SELECT AVG(price) AS "avg bulk item price"
 FROM health_store
 where section='bulk';
 
