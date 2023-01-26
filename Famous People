@@ -1,0 +1,62 @@
+/* Create table about the people and what they do here */
+
+CREATE TABLE famous_people (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER, marital_status TEXT);
+
+INSERT INTO famous_people (name, age, marital_status) VALUES ("Joaquin Phoenix", "48", "married");
+INSERT INTO famous_people (name, age, marital_status) VALUES ("Billie Eilish", "21", "single");
+INSERT INTO famous_people (name, age, marital_status) VALUES ("Woody Harrelson", "61", "married");
+INSERT INTO famous_people (name, age, marital_status)
+VALUES ("Lewis Hamilton", "38", "single");
+INSERT INTO famous_people (name, age, marital_status)
+VALUES ("Stevie Wonder", "72", "married");
+
+CREATE TABLE interests (id INTEGER PRIMARY KEY AUTOINCREMENT, person_id INTEGER, name TEXT);
+
+INSERT INTO interests (person_id, name) VALUES (1, "acting");
+INSERT INTO interests (person_id, name) VALUES (1, "riding motorcycles");
+INSERT INTO interests (person_id, name) VALUES (2, "singing");
+INSERT INTO interests (person_id, name) VALUES (2, "vegan cooking");
+INSERT INTO interests (person_id, name) VALUES (3, "acting");
+INSERT INTO interests (person_id, name) VALUES (3, "vegan activist");
+INSERT INTO interests (person_id, name) VALUES (4, "racing driver");
+INSERT INTO interests (person_id, name) VALUES (4, "animal lover");
+
+CREATE TABLE purchase (id INTEGER PRIMARY KEY AUTOINCREMENT, purchase_id INTEGER, item TEXT, spent INTEGER);
+
+INSERT INTO purchase (purchase_id, item, spent) VALUES (1,"house", 1390700);
+INSERT INTO purchase (purchase_id, item, spent) VALUES (2, "ranch", 2300000);
+INSERT INTO purchase (purchase_id, item, spent) VALUES (2,"dodge challenger", 70000);
+INSERT INTO purchase (purchase_id, item, spent) VALUES (3,"boutique hotel", 4500000);
+INSERT INTO purchase (purchase_id, item, spent) VALUES (4,"private jet", 21800000);
+
+--Select the 2 tables with a join so that you can see each person's name next to their interests
+
+SELECT famous_people.name, interests.name AS interests
+FROM famous_people
+JOIN interests
+ON famous_people.id=interests.person_id;
+
+--Now, add an additional query that shows only the name and hobbies of married celebrities
+
+SELECT famous_people.name, interests.name AS interests
+FROM famous_people
+JOIN interests
+ON famous_people.id=interests.person_id
+WHERE marital_status = "married";
+
+--Use a LEFT JOIN so that a person is listed even if he/she has no listed interests
+
+SELECT famous_people.name, interests.name
+FROM famous_people
+LEFT JOIN interests
+ON famous_people.id=interests.person_id;
+
+--Use a LEFT JOIN that will result in one row per each person, with their name and total amount of money spent on items. Sort from most to least.
+
+SELECT famous_people.name, sum(purchase.spent) AS total_spent
+FROM famous_people
+LEFT JOIN purchase
+ON famous_people.id=purchase.purchase_id
+GROUP BY famous_people.name
+ORDER BY total_spent desc;
+
