@@ -58,5 +58,5 @@ FROM famous_people
 LEFT JOIN purchase
 ON famous_people.id=purchase.purchase_id
 GROUP BY famous_people.name
-ORDER BY total_spent desc;
+ORDER BY total_spent desc; 
 
