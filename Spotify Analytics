@@ -61,4 +61,5 @@ FROM BIT_DB.spotifydata
 ORDER BY duration_ms desc
 LIMIT 1
 
+#Select the average danceability for the 10 most popular songs
 
