@@ -212,19 +212,30 @@ INSERT INTO picks (pick_number, name, college, picked_by, position)
 	VALUES(99,"Paul Dawson","TCU","Cincinnati","OLB");
   
  --How many NFL picks played at Ohio St.?
-SELECT COUNT(*) AS OhioSt_picks, college FROM picks WHERE college = "Ohio St.";
+SELECT college, COUNT(*) AS OhioSt_picks
+FROM picks 
+WHERE college = "Ohio St."; 
 
 --What Florida State players were drafted in the first round?
-SELECT * FROM picks WHERE college = "Florida State" AND pick_number <= 32;
+SELECT * 
+FROM picks 
+WHERE college = "Florida State" AND pick_number <= 32;
 
 --What was the most drafted postion?
-SELECT MAX(position) AS "most drafted postion" FROM picks;
+SELECT MAX(position) AS "most drafted postion" 
+FROM picks;
 
 --What is the total number of picks drafted for each position in descending order?
-SELECT position, COUNT(*) AS total_count FROM picks GROUP BY position ORDER BY COUNT(*) desc;
+SELECT position, COUNT(*) AS total_count 
+FROM picks 
+GROUP BY position 
+ORDER BY COUNT(*) desc;
 
 --What players were picked by Cincinnati, Cleveland, and Pittsburgh and sorted by city?
-SELECT * FROM picks WHERE picked_by IN ("Cincinnati", "Cleveland", "Pittsburgh") ORDER BY picked_by;
+SELECT * 
+FROM picks 
+WHERE picked_by IN ("Cincinnati", "Cleveland", "Pittsburgh") 
+ORDER BY picked_by;
 
 --Lists the number of picks from each team, sorted high to low (Only include teams with 5 or more picks):
 SELECT COUNT(id), picked_by
