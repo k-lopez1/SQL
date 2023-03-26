@@ -1,0 +1,158 @@
+/*
+Covid 19 Data 
+Tools used: Joins, CTE's, Temp Tables, Windows Functions, Aggregate Functions, Creating Views, Converting Data Types
+*/
+
+
+
+
+--Making sure I imported the correct tables
+Select * 
+From MyNewDB.CovidDeaths
+Order by location, date;
+
+Select *
+From MyNewDB.CovidDeaths
+Order by location, date;
+
+-- Select data that we are going to be using
+
+Select location, date, total_cases, new_cases, total_deaths, population
+From MyNewDB.CovidDeaths
+Order by location, date
+
+
+-- Looking at Total Cases vs Total Deaths
+-- Shows likelihood of dying if you contract covid in your country
+
+Select location, date, total_cases, total_deaths, 
+(CAST(total_deaths as FLOAT)/total_cases)*100 as DeathPercentage
+From MyNewDB.CovidDeaths
+Where location like '%states%'
+Order by 1,2
+
+
+-- Looking at Total Cases vs Population
+-- Shows what percentage of the population got covid in the US
+
+Select location, date, population, total_cases, 
+(CAST(total_cases as FLOAT)/population)*100 as PercentInfected
+From MyNewDB.CovidDeaths
+Where location like '%states%'
+Order by 1,2
+
+--Looking at countries with highest infection rate compared to population
+
+Select location,population, MAX(total_cases) as HighestInfectionCount, 
+    Max(CAST(total_cases as FLOAT)/population)*100 as PercentPopulationInfected
+From MyNewDB.CovidDeaths
+Group by location, population
+Order by PercentPopulationInfected desc
+
+--Showing the countries with the highest death count per population
+
+Select location, MAX(cast(total_deaths as int)) as TotalDeathCount
+From MyNewDB.CovidDeaths
+Where location is not null
+Group by location 
+Order by TotalDeathCount desc
+
+--Let's bring things down by continent
+--Showing the continents with the highest death count per population
+
+Select continent, MAX(cast(total_deaths as int)) as TotalDeathCount
+From MyNewDB.CovidDeaths
+Where continent is not null
+Group by continent
+Order by TotalDeathCount desc
+
+
+--GLOBAL NUMBERS
+
+Select date, SUM(new_cases) as total_cases, SUM(new_deaths) as total_deaths, 
+SUM(New_deaths)/SUM(new_cases)*100 as DeathPercentage
+From MyNewDB.CovidDeaths
+Where continent is not null
+Group by date
+Order by 1,2
+
+--GLOBAL NUMBERS OVERALL
+Select SUM(new_cases) as total_cases, SUM(new_deaths) as total_deaths, 
+SUM(new_deaths)/SUM(new_cases)*100 as DeathPercentage
+From MyNewDB.CovidDeaths
+Where continent is not null
+Order by 1,2
+
+
+
+-- Looking at total population vs vaccinations
+-- Shows Percentage of Population that has recieved at least one Covid Vaccine
+
+Select dea.continent, dea.location, dea.date,dea.population, vac.new_vaccinations
+,    SUM(COVERT(int,vac.new_vaccinations)) OVER (Partition by  dea.location Order by dea.location, dea.date)
+     as RollingPeopleVaccinated
+From MyNewDB.CovidDeaths dea
+    Join MyNewDB.CovidVaccinations vac
+        On dea.location = vac.location
+        and dea.date = vac.date
+Where dea.continent is not null
+Order by 2,3
+
+
+--Use CTE to give us the percent of the population that is vaccinated
+--Using CTE to perform Calculation on Partition By in previous query
+
+With PopvsVac (continent, location, date, population, new_vaccinations, RollingPeopleVaccinated)
+as
+(Select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
+,    SUM(CONVERT(bigint,vac.new_vaccinations)) OVER (Partition by  dea.location Order by dea.location, dea.date)
+     as RollingPeopleVaccinated
+From MyNewDB.CovidDeaths dea
+    Join MyNewDB.CovidVaccinations vac
+        On dea.location = vac.location
+        and dea.date = vac.date
+Where dea.continent is not null)
+
+Select *, (RollingPeopleVaccinated/Population)*100 as PercentVac
+From PopvsVac
+
+
+-- Using Temp Table to perform Calculation on Partition By in previous query
+
+DROP Table if exists #PercentPopulationVaccinated
+CREATE TABLE #PercentPopulationVaccinated
+(
+Continent nvarchar(255),
+Location nvarcahr(225),
+Date datetime,
+Population numeric,
+New_vaccinations numeric,
+RollingPeopleVaccinated numeric
+)
+
+Insert into #PercentPopulationVaccinated
+Select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
+,    SUM(CONVERT(bigint,vac.new_vaccinations)) OVER (Partition by  dea.location Order by dea.location, dea.date)
+     as RollingPeopleVaccinated
+From MyNewDB.CovidDeaths dea
+    Join MyNewDB.CovidVaccinations vac
+        On dea.location = vac.location
+        and dea.date = vac.date
+where dea.continent is not null
+
+Select *, (RollingPeopleVaccinated/Population)*100 as PercentVac
+From #PercentPopulationVaccinated
+
+
+
+--Creating View to store data for later vizualizations
+
+Create View PercentPopulationVaccinated as
+Select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
+,    SUM(CONVERT(bigint,vac.new_vaccinations)) OVER (Partition by  dea.location Order by dea.location, dea.date)
+     as RollingPeopleVaccinated
+From MyNewDB.CovidDeaths dea
+    Join MyNewDB.CovidVaccinations vac
+        On dea.location = vac.location
+        and dea.date = vac.date
+where dea.continent is not null
